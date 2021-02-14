@@ -19,9 +19,10 @@ import {FrontendApplicationContribution} from "@theia/core/lib/browser";
 import * as $ from "jquery";
 
 import {FileSystemWatcher} from '@theia/filesystem/lib/browser/filesystem-watcher';
+import {FileSystem} from '@theia/filesystem/lib/common/filesystem';
+
 import URI from "@theia/core/lib/common/uri";
 import {WorkspaceService} from '@theia/workspace/lib/browser';
-const fs = require('fs');
 
 
 export const AssistanceCommand = {
@@ -42,7 +43,8 @@ export class markingElements implements FrontendApplicationContribution {
     constructor(
 
         @inject(FileSystemWatcher) private readonly fileSystemWatcher: FileSystemWatcher,
-        @inject(WorkspaceService) private readonly workspaceService: WorkspaceService
+        @inject(WorkspaceService) private readonly workspaceService: WorkspaceService,
+        @inject(FileSystem) private readonly fileSystem: FileSystem
     ) { }
 
     findNewCurrent = () => {
@@ -168,38 +170,19 @@ export class markingElements implements FrontendApplicationContribution {
     }
 
     initialize() {
-
         this.workspaceService.recentWorkspaces().then(res => {
-            let uri = new URI(res[0] + "/.tutorial/assistance.json");
-            this.fileSystemWatcher.onFilesChanged;
+            let uri: URI = new URI(res[0] + "/.tutorial/assistance.json");
+            this.fileSystemWatcher.onFilesChanged(event => {
+                const relevantEvent = event.filter(e => uri.toString() == e.uri.toString());
+                if (relevantEvent.length) {
+                    this.fileSystem.resolveContent(uri.toString(), {encoding: "utf8"}).then((result) => {
 
-
-            fs.watchFile(uri.toString(), {
-                bigint: false,
-                persistent: true,
-                interval: 2000,
-            },
-                () => {
-                    fs.readFile(uri, "utf8").then((fileText: string) => {
-
-                        this.idList = JSON.parse(fileText);
+                        this.idList = JSON.parse(result.content);
 
                         this.observe();
                     });
-                });
-
-            /*this.fileService.onDidFilesChange(event => {
-                if (event.contains(uri)) {
-                    this.fileService.read(uri).then((fileText) => {
-
-                        this.idList = JSON.parse(fileText.value)
-
-                        this.observe();
-                    })
                 }
             });
-            this.fileService.watch(uri);
-            */
         });
     }
 }

@@ -50,6 +50,6 @@
     "minimal-theia",
     "browser-app",
     "electron-app",
-	"assistance"
+    "assistance"
   ]
 }

@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@types/jquery": "^3.5.5",
+    "jquery": "^3.5.1",
     "rimraf": "latest",
     "typescript": "latest"
   },
