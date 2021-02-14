@@ -49,6 +49,7 @@
     "minimal-glsp",
     "minimal-theia",
     "browser-app",
-    "electron-app"
+    "electron-app",
+	"assistance"
   ]
 }

@@ -1,0 +1,40 @@
+{
+  "name": "assistance",
+  "keywords": [
+    "theia-extension"
+  ],
+  "version": "0.0.0",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "dependencies": {
+    "@theia/core": "1.4.0",
+    "@theia/editor": "1.4.0",
+    "@theia/filesystem": "1.4.0",
+    "@theia/markers": "1.4.0",
+    "@theia/messages": "1.4.0",
+    "@theia/monaco": "1.4.0",
+    "@theia/navigator": "1.4.0",
+    "@theia/preferences": "1.4.0",
+    "@theia/process": "1.4.0",
+    "@theia/terminal": "1.4.0",
+    "@theia/workspace": "1.4.0"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.5.5",
+    "rimraf": "latest",
+    "typescript": "latest"
+  },
+  "scripts": {
+    "prepare": "yarn run clean && yarn run build",
+    "clean": "rimraf lib",
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "theiaExtensions": [
+    {
+      "frontend": "lib/browser/assistance-frontend-module"
+    }
+  ]
+}
