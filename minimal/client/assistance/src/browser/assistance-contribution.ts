@@ -171,11 +171,18 @@ export class markingElements implements FrontendApplicationContribution {
 
     initialize() {
         this.workspaceService.recentWorkspaces().then(res => {
-            let uri: URI = new URI(res[0] + "/.tutorial/assistance.json");
+            let uris: Array<URI> = res.map(workespace => new URI(workespace + "/.tutorial/assistance.json"));
+
             this.fileSystemWatcher.onFilesChanged(event => {
-                const relevantEvent = event.filter(e => uri.toString() == e.uri.toString());
-                if (relevantEvent.length) {
-                    this.fileSystem.resolveContent(uri.toString(), {encoding: "utf8"}).then((result) => {
+                let relevantURI: URI | undefined;
+                event.forEach(e => {
+                    let isTrigger = uris.filter(uri => uri.toString() == e.uri.toString());
+                    if (isTrigger.length) {
+                        relevantURI = e.uri;
+                    }
+                });
+                if (relevantURI != undefined) {
+                    this.fileSystem.resolveContent(relevantURI.toString(), {encoding: "utf8"}).then((result) => {
 
                         this.idList = JSON.parse(result.content);
 
