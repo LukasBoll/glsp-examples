@@ -90,8 +90,7 @@ export class markingElements implements FrontendApplicationContribution {
         } else {
             let tmp = this.idList[this.currentHint];
             this.topPosition = $("div" + ":visible")
-                .filter(function () {return $(this).children().length === 0 && $(this).text() === tmp;})
-                .parent()[0].getBoundingClientRect().top + $(window)['scrollTop']()!;
+                .filter(function () {return $(this).children().length === 0 && $(this).text() === tmp;}).offset()!.top + $(window)['scrollTop']()!;
         }
         return this.topPosition;
     }
