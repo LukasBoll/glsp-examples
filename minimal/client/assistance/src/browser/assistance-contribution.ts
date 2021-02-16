@@ -22,7 +22,6 @@ import {FileSystemWatcher} from '@theia/filesystem/lib/browser/filesystem-watche
 import {FileSystem} from '@theia/filesystem/lib/common/filesystem';
 
 import URI from "@theia/core/lib/common/uri";
-import {WorkspaceService} from '@theia/workspace/lib/browser';
 
 
 export const AssistanceCommand = {
@@ -43,7 +42,6 @@ export class markingElements implements FrontendApplicationContribution {
     constructor(
 
         @inject(FileSystemWatcher) private readonly fileSystemWatcher: FileSystemWatcher,
-        @inject(WorkspaceService) private readonly workspaceService: WorkspaceService,
         @inject(FileSystem) private readonly fileSystem: FileSystem
     ) { }
 
@@ -170,26 +168,22 @@ export class markingElements implements FrontendApplicationContribution {
     }
 
     initialize() {
-        this.workspaceService.recentWorkspaces().then(res => {
-            let uris: Array<URI> = res.map(workespace => new URI(workespace + "/.tutorial/assistance.json"));
 
-            this.fileSystemWatcher.onFilesChanged(event => {
-                let relevantURI: URI | undefined;
-                event.forEach(e => {
-                    let isTrigger = uris.filter(uri => uri.toString() == e.uri.toString());
-                    if (isTrigger.length) {
-                        relevantURI = e.uri;
-                    }
-                });
-                if (relevantURI != undefined) {
-                    this.fileSystem.resolveContent(relevantURI.toString(), {encoding: "utf8"}).then((result) => {
-
-                        this.idList = JSON.parse(result.content);
-
-                        this.observe();
-                    });
+        this.fileSystemWatcher.onFilesChanged(event => {
+            let relevantURI: URI | undefined;
+            event.forEach(e => {
+                if (e.uri.toString().endsWith(".tutorial/assistance.json")) {
+                    relevantURI = e.uri;
                 }
             });
+            if (relevantURI != undefined) {
+                this.fileSystem.resolveContent(relevantURI.toString(), {encoding: "utf8"}).then((result) => {
+
+                    this.idList = JSON.parse(result.content);
+
+                    this.observe();
+                });
+            }
         });
     }
 }
